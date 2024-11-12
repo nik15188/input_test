@@ -1,1 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Double the Number</title>
+</head>
+<body>
+    <h3>Enter a number to double it:</h3>
+    
+    <input type="number" id="inputNumber" placeholder="Enter a number">
+    <button onclick="doubleNumber()">Calculate</button>
+    
+    <p>Result: <span id="result"></span></p>
 
+    <script>
+        function doubleNumber() {
+            const input = Number(document.getElementById('inputNumber').value);
+            const result = input * 2;
+            document.getElementById('result').textContent = result;
+        }
+    </script>
+</body>
+</html>
