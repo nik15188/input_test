@@ -497,6 +497,154 @@ function getCleanNumber(value) {
     return parseFloat(value) || 0;
 }
 
+// Complete tier information configuration
+const tierInfo = {
+    workers: {
+        requests: {
+            free: "Free tier: 100,000 requests/day",
+            paid: "Paid tier includes: 10M requests/month"
+        },
+        cpu: {
+            free: "Free tier: 10ms CPU time",
+            paid: "Paid tier includes: 30M CPU-ms/month"
+        }
+    },
+    r2: {
+        storage: {
+            free: "Free tier: 10GB storage",
+            paid: "Paid tier: $0.015 per GB"
+        },
+        classA: {
+            free: "Free tier: 1M Class A ops/month",
+            paid: "Paid tier: $4.50 per million Class A ops"
+        },
+        classB: {
+            free: "Free tier: 10M Class B ops/month",
+            paid: "Paid tier: $0.36 per million Class B ops"
+        }
+    },
+    kv: {
+        reads: {
+            free: "Free tier: 100,000 reads/day",
+            paid: "Paid tier includes: 10M reads/month"
+        },
+        writes: {
+            free: "Free tier: 1,000 writes/day",
+            paid: "Paid tier includes: 1M writes/month"
+        },
+        deletes: {
+            free: "Free tier: 1,000 deletes/day",
+            paid: "Paid tier includes: 1M deletes/month"
+        },
+        lists: {
+            free: "Free tier: 1,000 list ops/day",
+            paid: "Paid tier includes: 1M list ops/month"
+        },
+        storage: {
+            free: "Free tier: 1GB storage",
+            paid: "Paid tier includes: 1GB storage"
+        }
+    },
+    d1: {
+        reads: {
+            free: "Free tier: 5M rows read/day",
+            paid: "Paid tier includes: 25B rows read/month"
+        },
+        writes: {
+            free: "Free tier: 100K rows written/day",
+            paid: "Paid tier includes: 50M rows written/month"
+        },
+        storage: {
+            free: "Free tier: 5GB storage",
+            paid: "Paid tier: $0.75 per additional GB"
+        }
+    },
+    durableObjects: {
+        requests: {
+            free: "No free tier",
+            paid: "Paid tier includes: 1M requests/month"
+        },
+        duration: {
+            free: "No free tier",
+            paid: "Paid tier includes: 400K GB-seconds/month"
+        }
+    },
+    vectorize: {
+        queries: {
+            free: "Free tier: 30M vector dimensions/month",
+            paid: "Paid tier includes: 50M vector dimensions/month"
+        },
+        storage: {
+            free: "Free tier: 5M vector dimensions",
+            paid: "Paid tier includes: 10M vector dimensions"
+        }
+    },
+    aiGateway: {
+        logs: {
+            free: "Free tier: 100K logs/month",
+            paid: "Paid tier includes: 200K logs/month"
+        }
+    },
+    analytics: {
+        datapoints: {
+            free: "Free tier: 100K data points/day",
+            paid: "Paid tier includes: 10M data points/month"
+        },
+        queries: {
+            free: "Free tier: 10K queries/day",
+            paid: "Paid tier includes: 1M queries/month"
+        }
+    },
+    zaraz: {
+        events: {
+            free: "Free tier: 1M events/month",
+            paid: "Paid tier: $5 per million events"
+        }
+    },
+    cicd: {
+        minutes: {
+            free: "Free tier: 3,000 minutes/month",
+            paid: "Paid tier includes: 6,000 minutes/month"
+        }
+    },
+    observability: {
+        events: {
+            free: "Free tier: 200K events/day",
+            paid: "Paid tier includes: 20M events/month"
+        }
+    }
+};
+
+// Function to update tier information note
+function updateTierInfo(input, isPaid) {
+    const [productId, inputType] = input.id.split('-');
+    const tierNote = input.parentElement.querySelector('.free-tier-note');
+    
+    if (!tierNote || !tierInfo[productId] || !tierInfo[productId][inputType]) return;
+    
+    const info = tierInfo[productId][inputType];
+    tierNote.textContent = isPaid ? info.paid : info.free;
+    
+    // Update styling
+    tierNote.className = `free-tier-note ${isPaid ? 'paid-tier' : ''}`;
+}
+
+// Add this CSS
+const tierStyles = document.createElement('style');
+tierStyles.textContent = `
+    .free-tier-note {
+        font-size: 0.85em;
+        color: #4caf50;
+        margin-top: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .free-tier-note.paid-tier {
+        color: #2196f3;
+    }
+`;
+document.head.appendChild(tierStyles);
+
 // Enhanced Input Event Handlers
 function setupInputFormatting() {
     const inputs = document.querySelectorAll('input[type="number"]');
@@ -518,6 +666,52 @@ function setupInputFormatting() {
         // Input event handlers
         input.addEventListener('input', function(e) {
             let value = getCleanNumber(this.value);
+            
+            // Check if exceeding free tier
+            let isPaid = false;
+            switch(this.id) {
+                // Existing cases...
+                case 'd1-reads':
+                    isPaid = value > 5000000;
+                    break;
+                case 'd1-writes':
+                    isPaid = value > 100000;
+                    break;
+                case 'd1-storage':
+                    isPaid = value > 5;
+                    break;
+                case 'durableObjects-requests':
+                case 'durableObjects-duration':
+                    isPaid = value > 0; // Always paid
+                    break;
+                case 'vectorize-queries':
+                    isPaid = value > 30000000;
+                    break;
+                case 'vectorize-storage':
+                    isPaid = value > 5000000;
+                    break;
+                case 'aiGateway-logs':
+                    isPaid = value > 100000;
+                    break;
+                case 'analytics-datapoints':
+                    isPaid = value > 100000;
+                    break;
+                case 'analytics-queries':
+                    isPaid = value > 10000;
+                    break;
+                case 'zaraz-events':
+                    isPaid = value > 1000000;
+                    break;
+                case 'cicd-minutes':
+                    isPaid = value > 3000;
+                    break;
+                case 'observability-events':
+                    isPaid = value > 200000;
+                    break;
+            }
+            
+            // Update tier information
+            updateTierInfo(this, isPaid);
             
             // Apply max limit
             if (config.max && value > config.max) {
@@ -794,6 +988,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add tooltips
     setupTooltips();
+
+    // Initialize all tier notes
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        const value = getCleanNumber(input.value);
+        updateTierInfo(input, false); // Start with free tier info
+    });
 });
 
 // Input Validation
