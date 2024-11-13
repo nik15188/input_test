@@ -312,3 +312,45 @@ header h1 {
         text-align: center;
     }
 }
+
+/* Sticky Header Container */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #f5f5f5;
+    z-index: 1000;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e3f2fd;
+}
+
+/* Total Summary Panel */
+.total-summary {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    border: 2px solid #e3f2fd;
+}
+
+/* Navigation Styles */
+.category-nav {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px 0;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Adjust main content to account for sticky header */
+main {
+    padding-top: 20px;
+}
+
+/* Category section adjustment */
+.category-section {
+    scroll-margin-top: 250px; /* Adjust this value based on your header height */
+}
