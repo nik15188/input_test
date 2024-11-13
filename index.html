@@ -1,17 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Double the Number</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Pricing Calculator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h3>Enter a number to double it:</h3>
-    
-    <input type="number" id="inputNumber" placeholder="Enter a number">
-    <button onclick="doubleNumber()">Calculate1</button>
-    
-    <p>Result: <span id="result"></span></p>
+    <div class="container">
+        <header>
+            <h1>Product Pricing Calculator</h1>
+            <div class="total-summary">
+                <div class="total-cost">
+                    <h2>Total Monthly Cost: <span id="total-cost">$0.00</span></h2>
+                    <div class="plan-badge" id="overall-plan">Free Plan</div>
+                    <div class="plan-note" id="plan-note"></div>
+                </div>
+            </div>
+        </header>
 
-    <!-- Link to external JavaScript file -->
+        <main>
+            <div class="product-grid">
+                <div class="product-card">
+                    <h3>Product 1</h3>
+                    <div class="input-group">
+                        <label for="product1-usage">Monthly Usage:</label>
+                        <input type="number" id="product1-usage" min="0" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="product1-storage">Storage (GB):</label>
+                        <input type="number" id="product1-storage" min="0" value="0">
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="product1-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="product1-cost">$0.00</span></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
