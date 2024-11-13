@@ -32,11 +32,25 @@
         <!-- Compute Section -->
         <section id="compute" class="category-section">
             <h2>Compute</h2>
+            
+            <!-- Workers Card -->
             <div class="product-card" id="workers-card">
-                <h3>Workers</h3>
+                <div class="product-header">
+                    <h3>
+                        <div class="product-tooltip">
+                            Workers
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Workers</div>
+                                <div class="tooltip-description">Serverless JavaScript execution environment.</div>
+                                <div class="tooltip-pricing">Free Tier: 100,000 requests/day, 10ms CPU time</div>
+                                <div class="tooltip-usecase">Ideal for: API handling, web applications</div>
+                            </div>
+                        </div>
+                    </h3>
+                </div>
                 <div class="input-group">
                     <label for="workers-requests">Requests per day</label>
-                    <input type="number" id="workers-requests" min="0" value="0">
+                    <input type="number" id="workers-requests" min="0" value="0" data-show-monthly="true">
                     <div class="free-tier-note">Free tier: 100,000 requests/day</div>
                 </div>
                 <div class="input-group">
@@ -57,20 +71,32 @@
             
             <!-- R2 Card -->
             <div class="product-card" id="r2-card">
-                <h3>R2 Storage</h3>
+                <div class="product-header">
+                    <h3>
+                        <div class="product-tooltip">
+                            R2 Storage
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">R2 Storage</div>
+                                <div class="tooltip-description">Object storage with no egress fees</div>
+                                <div class="tooltip-pricing">Free Tier: 10GB storage, 1M Class A ops</div>
+                                <div class="tooltip-usecase">Ideal for: Large file storage, backups</div>
+                            </div>
+                        </div>
+                    </h3>
+                </div>
                 <div class="input-group">
-                    <label for="r2-storage">Storage (GB)</label>
-                    <input type="number" id="r2-storage" min="0" value="0">
+                    <label for="r2-storage">Storage Used (GB)</label>
+                    <input type="number" id="r2-storage" min="0" value="0" step="0.1">
                     <div class="free-tier-note">Free tier: 10GB storage</div>
                 </div>
                 <div class="input-group">
                     <label for="r2-class-a">Class A Operations per day</label>
-                    <input type="number" id="r2-class-a" min="0" value="0">
+                    <input type="number" id="r2-class-a" min="0" value="0" data-show-monthly="true">
                     <div class="free-tier-note">Free tier: 1M Class A ops/month</div>
                 </div>
                 <div class="input-group">
                     <label for="r2-class-b">Class B Operations per day</label>
-                    <input type="number" id="r2-class-b" min="0" value="0">
+                    <input type="number" id="r2-class-b" min="0" value="0" data-show-monthly="true">
                     <div class="free-tier-note">Free tier: 10M Class B ops/month</div>
                 </div>
                 <div class="product-cost">
@@ -81,30 +107,42 @@
 
             <!-- Workers KV Card -->
             <div class="product-card" id="kv-card">
-                <h3>Workers KV</h3>
+                <div class="product-header">
+                    <h3>
+                        <div class="product-tooltip">
+                            Workers KV
+                            <div class="tooltip-content">
+                                <div class="tooltip-title">Workers KV</div>
+                                <div class="tooltip-description">Low-latency key-value store</div>
+                                <div class="tooltip-pricing">Free Tier: 100k reads/day, 1k writes/day</div>
+                                <div class="tooltip-usecase">Ideal for: Configuration, caching</div>
+                            </div>
+                        </div>
+                    </h3>
+                </div>
                 <div class="input-group">
                     <label for="kv-reads">Read Requests per day</label>
-                    <input type="number" id="kv-reads" min="0" value="0">
+                    <input type="number" id="kv-reads" min="0" value="0" data-show-monthly="true">
                     <div class="free-tier-note">Free tier: 100,000 reads/day</div>
                 </div>
                 <div class="input-group">
                     <label for="kv-writes">Write Requests per day</label>
-                    <input type="number" id="kv-writes" min="0" value="0">
+                    <input type="number" id="kv-writes" min="0" value="0" data-show-monthly="true">
                     <div class="free-tier-note">Free tier: 1,000 writes/day</div>
                 </div>
                 <div class="input-group">
                     <label for="kv-deletes">Delete Requests per day</label>
-                    <input type="number" id="kv-deletes" min="0" value="0">
+                    <input type="number" id="kv-deletes" min="0" value="0" data-show-monthly="true">
                     <div class="free-tier-note">Free tier: 1,000 deletes/day</div>
                 </div>
                 <div class="input-group">
                     <label for="kv-lists">List Requests per day</label>
-                    <input type="number" id="kv-lists" min="0" value="0">
+                    <input type="number" id="kv-lists" min="0" value="0" data-show-monthly="true">
                     <div class="free-tier-note">Free tier: 1,000 list ops/day</div>
                 </div>
                 <div class="input-group">
                     <label for="kv-storage">Storage Used (GB)</label>
-                    <input type="number" id="kv-storage" min="0" value="0">
+                    <input type="number" id="kv-storage" min="0" value="0" step="0.1">
                     <div class="free-tier-note">Free tier: 1GB storage</div>
                 </div>
                 <div class="product-cost">
