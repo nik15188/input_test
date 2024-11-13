@@ -225,3 +225,44 @@ function handleError(error, productId) {
     costElement.textContent = 'Error';
     costElement.style.color = '#f44336';
 }
+
+// Navigation functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            categoryButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Scroll to section
+            const targetId = this.getAttribute('data-target');
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    // Optional: Update active button on scroll
+    window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('.category-section');
+        let currentSection = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 250;
+            if (window.pageYOffset >= sectionTop) {
+                currentSection = section.id;
+            }
+        });
+        
+        categoryButtons.forEach(button => {
+            button.classList.toggle('active', 
+                button.getAttribute('data-target') === currentSection);
+        });
+    });
+});
