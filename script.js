@@ -1,64 +1,5 @@
-// Pricing Constants
-const PRICING = {
-    workers: {
-        free: {
-            requestsPerDay: 100000,
-            cpuTimePerInvocation: 10
-        },
-        paid: {
-            includedRequestsPerMonth: 10000000,
-            includedCpuTimePerMonth: 30000000,
-            additionalRequestsCost: 0.30,
-            additionalCpuTimeCost: 0.02
-        }
-    },
-    r2: {
-        free: {
-            storageGB: 10,
-            classAMonthly: 1000000,
-            classBMonthly: 10000000
-        },
-        paid: {
-            storagePerGB: 0.015,
-            classAPerMillion: 4.50,
-            classBPerMillion: 0.36
-        }
-    },
-    workersKV: {
-        free: {
-            readsPerDay: 100000,
-            writesPerDay: 1000,
-            deletesPerDay: 1000,
-            listsPerDay: 1000,
-            storageGB: 1
-        },
-        paid: {
-            includedReadsPerMonth: 10000000,
-            includedWritesPerMonth: 1000000,
-            includedDeletesPerMonth: 1000000,
-            includedListsPerMonth: 1000000,
-            includedStorageGB: 1,
-            additionalReadsPerMillion: 0.50,
-            additionalWritesPerMillion: 5.0,
-            additionalDeletesPerMillion: 5.0,
-            additionalListsPerMillion: 5.0,
-            additionalStoragePerGB: 0.50
-        }
-    },
-    // ... continue with other products
-};
-
-// Utility Functions
-function calculateMonthlyUsage(dailyValue) {
-    return (parseFloat(dailyValue) || 0) * 30;
-}
-
-function calculateExcessCost(usage, included, ratePerUnit, unitSize = 1000000) {
-    const excess = Math.max(usage - included, 0);
-    return Math.ceil(excess / unitSize) * ratePerUnit;
-}
-
 // Product Calculation Functions
+
 function calculateWorkers() {
     const requestsPerDay = parseFloat(document.getElementById('workers-requests').value) || 0;
     const cpuTime = parseFloat(document.getElementById('workers-cpu').value) || 0;
@@ -69,15 +10,13 @@ function calculateWorkers() {
     let cost = 0;
     let isPaid = false;
 
-    if (requestsPerDay > PRICING.workers.free.requestsPerDay || 
-        cpuTime > PRICING.workers.free.cpuTimePerInvocation) {
+    if (requestsPerDay > 100000 || cpuTime > 10) {
         isPaid = true;
+        const billedRequests = monthlyRequests - 10000000;
+        const billedCPUTime = monthlyCPUTime - 30000000;
         
-        const billedRequests = monthlyRequests - PRICING.workers.paid.includedRequestsPerMonth;
-        const billedCPUTime = monthlyCPUTime - PRICING.workers.paid.includedCpuTimePerMonth;
-        
-        cost += Math.max(Math.ceil(billedRequests/1000000) * PRICING.workers.paid.additionalRequestsCost, 0);
-        cost += Math.max(Math.ceil(billedCPUTime/1000000) * PRICING.workers.paid.additionalCpuTimeCost, 0);
+        cost += Math.max(Math.ceil(billedRequests/1000000) * 0.30, 0);
+        cost += Math.max(Math.ceil(billedCPUTime/1000000) * 0.02, 0);
     }
 
     return {
@@ -97,19 +36,20 @@ function calculateR2() {
     let cost = 0;
     let isPaid = false;
 
-    if (storage > PRICING.r2.free.storageGB || 
-        monthlyClassA > PRICING.r2.free.classAMonthly ||
-        monthlyClassB > PRICING.r2.free.classBMonthly) {
+    if (storage > 10 || monthlyClassA > 1000000 || monthlyClassB > 10000000) {
         isPaid = true;
         
-        if (storage > PRICING.r2.free.storageGB) {
-            cost += (storage - PRICING.r2.free.storageGB) * PRICING.r2.paid.storagePerGB;
+        if (storage > 10) {
+            cost += (storage - 10) * 0.015;
         }
         
-        cost += calculateExcessCost(monthlyClassA, PRICING.r2.free.classAMonthly, 
-                                  PRICING.r2.paid.classAPerMillion);
-        cost += calculateExcessCost(monthlyClassB, PRICING.r2.free.classBMonthly, 
-                                  PRICING.r2.paid.classBPerMillion);
+        if (monthlyClassA > 1000000) {
+            cost += Math.ceil((monthlyClassA - 1000000) / 1000000) * 4.50;
+        }
+        
+        if (monthlyClassB > 10000000) {
+            cost += Math.ceil((monthlyClassB - 10000000) / 1000000) * 0.36;
+        }
     }
 
     return {
@@ -118,7 +58,6 @@ function calculateR2() {
     };
 }
 
-// Similar functions for other products...
 function calculateWorkersKV() {
     const reads = parseFloat(document.getElementById('kv-reads').value) || 0;
     const writes = parseFloat(document.getElementById('kv-writes').value) || 0;
@@ -126,33 +65,36 @@ function calculateWorkersKV() {
     const lists = parseFloat(document.getElementById('kv-lists').value) || 0;
     const storage = parseFloat(document.getElementById('kv-storage').value) || 0;
     
+    const monthlyReads = calculateMonthlyUsage(reads);
+    const monthlyWrites = calculateMonthlyUsage(writes);
+    const monthlyDeletes = calculateMonthlyUsage(deletes);
+    const monthlyLists = calculateMonthlyUsage(lists);
+    
     let cost = 0;
     let isPaid = false;
 
-    if (reads > PRICING.workersKV.free.readsPerDay ||
-        writes > PRICING.workersKV.free.writesPerDay ||
-        deletes > PRICING.workersKV.free.deletesPerDay ||
-        lists > PRICING.workersKV.free.listsPerDay ||
-        storage > PRICING.workersKV.free.storageGB) {
+    if (reads > 100000 || writes > 1000 || deletes > 1000 || 
+        lists > 1000 || storage > 1) {
         isPaid = true;
         
-        const monthlyReads = calculateMonthlyUsage(reads);
-        const monthlyWrites = calculateMonthlyUsage(writes);
-        const monthlyDeletes = calculateMonthlyUsage(deletes);
-        const monthlyLists = calculateMonthlyUsage(lists);
-
-        cost += calculateExcessCost(monthlyReads, PRICING.workersKV.paid.includedReadsPerMonth,
-                                  PRICING.workersKV.paid.additionalReadsPerMillion);
-        cost += calculateExcessCost(monthlyWrites, PRICING.workersKV.paid.includedWritesPerMonth,
-                                  PRICING.workersKV.paid.additionalWritesPerMillion);
-        cost += calculateExcessCost(monthlyDeletes, PRICING.workersKV.paid.includedDeletesPerMonth,
-                                  PRICING.workersKV.paid.additionalDeletesPerMillion);
-        cost += calculateExcessCost(monthlyLists, PRICING.workersKV.paid.includedListsPerMonth,
-                                  PRICING.workersKV.paid.additionalListsPerMillion);
+        if (monthlyReads > 10000000) {
+            cost += Math.ceil((monthlyReads - 10000000) / 1000000) * 0.50;
+        }
         
-        if (storage > PRICING.workersKV.free.storageGB) {
-            cost += (storage - PRICING.workersKV.free.storageGB) * 
-                    PRICING.workersKV.paid.additionalStoragePerGB;
+        if (monthlyWrites > 1000000) {
+            cost += Math.ceil((monthlyWrites - 1000000) / 1000000) * 5.0;
+        }
+        
+        if (monthlyDeletes > 1000000) {
+            cost += Math.ceil((monthlyDeletes - 1000000) / 1000000) * 5.0;
+        }
+        
+        if (monthlyLists > 1000000) {
+            cost += Math.ceil((monthlyLists - 1000000) / 1000000) * 5.0;
+        }
+        
+        if (storage > 1) {
+            cost += (storage - 1) * 0.50;
         }
     }
 
@@ -192,8 +134,11 @@ function calculateD1() {
 }
 
 function calculateDurableObjects() {
-    const requests = parseFloat(document.getElementById('do-requests').value) || 0;
-    const duration = parseFloat(document.getElementById('do-duration').value) || 0;
+    const requests = parseFloat(document.getElementById('durableObjects-requests').value) || 0;
+    const duration = parseFloat(document.getElementById('durableObjects-duration').value) || 0;
+    
+    const monthlyRequests = calculateMonthlyUsage(requests);
+    const monthlyDuration = calculateMonthlyUsage(duration);
     
     let cost = 0;
     let isPaid = false;
@@ -201,11 +146,30 @@ function calculateDurableObjects() {
     if (requests > 0 || duration > 0) {
         isPaid = true;
         
-        const excessRequests = Math.max(requests - 1000000, 0);
-        const excessDuration = Math.max(duration - 400000, 0);
+        const excessRequests = Math.max(monthlyRequests - 1000000, 0);
+        const excessDuration = Math.max(monthlyDuration - 400000, 0);
 
-        cost += Math.ceil(excessRequests / 1000000) * 0.15;      // $0.15 per million requests
-        cost += Math.ceil(excessDuration / 1000000) * 12.50;     // $12.50 per million GB-seconds
+        cost += Math.ceil(excessRequests / 1000000) * 0.15;
+        cost += Math.ceil(excessDuration / 1000000) * 12.50;
+    }
+
+    return {
+        cost: cost.toFixed(2),
+        isPaid
+    };
+}
+
+function calculateAIGateway() {
+    const logsPerDay = parseFloat(document.getElementById('aiGateway-logs').value) || 0;
+    const monthlyLogs = calculateMonthlyUsage(logsPerDay);
+    
+    let cost = 0;
+    let isPaid = false;
+
+    if (monthlyLogs > 100000) {
+        isPaid = true;
+        const excessLogs = Math.max(monthlyLogs - 200000, 0);
+        cost += Math.ceil(excessLogs / 100000) * 8.00;
     }
 
     return {
@@ -227,30 +191,8 @@ function calculateVectorize() {
         const excessQueries = Math.max(queries - 50000000, 0);
         const excessStorage = Math.max(storage - 10000000, 0);
 
-        cost += Math.ceil(excessQueries / 1000000) * 0.01;           // $0.01 per million queries
-        cost += Math.ceil(excessStorage / 100000000) * 0.05;         // $0.05 per 100M dimensions
-    }
-
-    return {
-        cost: cost.toFixed(2),
-        isPaid
-    };
-}
-
-function calculateAIGateway() {
-    const logsPerDay = parseFloat(document.getElementById('ai-gateway-logs').value) || 0;
-    const monthlyLogs = calculateMonthlyUsage(logsPerDay);
-    
-    let cost = 0;
-    let isPaid = false;
-
-    if (monthlyLogs > 100000) {
-        isPaid = true;
-        
-        if (monthlyLogs > 200000) {
-            const excessLogs = monthlyLogs - 200000;
-            cost += Math.ceil(excessLogs / 100000) * 8.0;    // $8 per 100k logs
-        }
+        cost += Math.ceil(excessQueries / 1000000) * 0.01;
+        cost += Math.ceil(excessStorage / 100000000) * 0.05;
     }
 
     return {
@@ -275,8 +217,8 @@ function calculateAnalyticsEngine() {
         const excessDataPoints = Math.max(monthlyDataPoints - 10000000, 0);
         const excessQueries = Math.max(monthlyQueries - 1000000, 0);
 
-        cost += Math.ceil(excessDataPoints / 1000000) * 0.25;    // $0.25 per million datapoints
-        cost += Math.ceil(excessQueries / 1000000) * 1.0;        // $1.00 per million queries
+        cost += Math.ceil(excessDataPoints / 1000000) * 0.25;
+        cost += Math.ceil(excessQueries / 1000000) * 1.0;
     }
 
     return {
@@ -295,7 +237,7 @@ function calculateZaraz() {
     if (monthlyEvents > 1000000) {
         isPaid = true;
         const excessEvents = monthlyEvents - 1000000;
-        cost += Math.ceil(excessEvents / 1000000) * 5.0;    // $5.00 per million events
+        cost += Math.ceil(excessEvents / 1000000) * 5.0;
     }
 
     return {
@@ -316,7 +258,7 @@ function calculateCICD() {
         
         if (monthlyMinutes > 6000) {
             const excessMinutes = monthlyMinutes - 6000;
-            cost += excessMinutes * 0.005;    // $0.005 per minute
+            cost += excessMinutes * 0.005;
         }
     }
 
@@ -326,683 +268,111 @@ function calculateCICD() {
     };
 }
 
-// UI Update Functions
+function calculateObservability() {
+    const eventsPerDay = parseFloat(document.getElementById('observability-events').value) || 0;
+    const monthlyEvents = calculateMonthlyUsage(eventsPerDay);
+    
+    let cost = 0;
+    let isPaid = false;
+
+    if (eventsPerDay > 200000) {
+        isPaid = true;
+        const excessEvents = Math.max(monthlyEvents - 20000000, 0);
+        cost += Math.ceil(excessEvents / 1000000) * 0.60;
+    }
+
+    return {
+        cost: cost.toFixed(2),
+        isPaid
+    };
+}
+
+// Utility Functions
+function calculateMonthlyUsage(dailyValue) {
+    return (parseFloat(dailyValue) || 0) * 30;
+}
+
 function updateProductUI(productId, result) {
     const planBadge = document.getElementById(`${productId}-plan`);
     const costElement = document.getElementById(`${productId}-cost`);
     
-    planBadge.textContent = result.isPaid ? 'Paid Plan' : 'Free Plan';
-    planBadge.className = `plan-badge ${result.isPaid ? 'paid' : 'free'}`;
-    costElement.textContent = `$${result.cost}`;
+    if (planBadge && costElement) {
+        planBadge.textContent = result.isPaid ? 'Paid Plan' : 'Free Plan';
+        planBadge.className = `plan-badge ${result.isPaid ? 'paid' : 'free'}`;
+        costElement.textContent = `$${result.cost}`;
+    }
 }
 
-function updateTotalCost() {
+function calculateTotalCost() {
+    let totalCost = 0;
+    let hasAnyPaidPlan = false;
+
     const products = [
         { id: 'workers', calc: calculateWorkers },
         { id: 'r2', calc: calculateR2 },
         { id: 'kv', calc: calculateWorkersKV },
         { id: 'd1', calc: calculateD1 },
-        { id: 'do', calc: calculateDurableObjects },
+        { id: 'durableObjects', calc: calculateDurableObjects },
         { id: 'vectorize', calc: calculateVectorize },
-        { id: 'ai-gateway', calc: calculateAIGateway },
+        { id: 'aiGateway', calc: calculateAIGateway },
         { id: 'analytics', calc: calculateAnalyticsEngine },
         { id: 'zaraz', calc: calculateZaraz },
-        { id: 'cicd', calc: calculateCICD }
+        { id: 'cicd', calc: calculateCICD },
+        { id: 'observability', calc: calculateObservability }
     ];
 
-    let totalCost = 0;
-    let hasAnyPaidPlan = false;
-
-    // Calculate costs and update UI for each product
     products.forEach(product => {
-        const result = product.calc();
-        updateProductUI(product.id, result);
-        
-        totalCost += parseFloat(result.cost);
-        if (result.isPaid) hasAnyPaidPlan = true;
+        try {
+            const result = product.calc();
+            if (result.isPaid) hasAnyPaidPlan = true;
+            totalCost += parseFloat(result.cost);
+            updateProductUI(product.id, result);
+        } catch (error) {
+            console.error(`Error calculating ${product.id}:`, error);
+        }
     });
 
-    // Add platform fee if any paid plan
     if (hasAnyPaidPlan) {
-        totalCost += 5; // $5 platform fee
+        totalCost += 5; // Platform fee
     }
 
     // Update total cost display
-    document.getElementById('total-cost').textContent = `$${totalCost.toFixed(2)}`;
-    
+    const totalCostElement = document.getElementById('total-cost');
+    if (totalCostElement) {
+        totalCostElement.textContent = `$${totalCost.toFixed(2)}`;
+    }
+
     // Update overall plan badge
     const overallPlan = document.getElementById('overall-plan');
     const planNote = document.getElementById('plan-note');
     
-    overallPlan.textContent = hasAnyPaidPlan ? 'Paid Plan' : 'Free Plan';
-    overallPlan.className = `plan-badge ${hasAnyPaidPlan ? 'paid' : 'free'}`;
-    planNote.textContent = hasAnyPaidPlan ? '(Includes $5 platform fee)' : '';
+    if (overallPlan && planNote) {
+        overallPlan.textContent = hasAnyPaidPlan ? 'Paid Plan' : 'Free Plan';
+        overallPlan.className = `plan-badge ${hasAnyPaidPlan ? 'paid' : 'free'}`;
+        planNote.textContent = hasAnyPaidPlan ? '(Includes $5 platform fee)' : '';
+    }
 }
 
-// Error Handling
-function handleError(error, productId) {
-    console.error(`Error calculating ${productId} cost:`, error);
-    const costElement = document.getElementById(`${productId}-cost`);
-    costElement.textContent = 'Error';
-    costElement.style.color = '#f44336';
-}
-
-// Navigation Functions
-function initializeNavigation() {
-    const categoryButtons = document.querySelectorAll('.category-btn');
-    
-    categoryButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            categoryButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Add active class to clicked button
-            this.classList.add('active');
-            
-            // Scroll to section
-            const targetId = this.getAttribute('data-target');
-            const targetSection = document.getElementById(targetId);
-            
-            if (targetSection) {
-                const headerHeight = document.querySelector('.sticky-header').offsetHeight;
-                const targetPosition = targetSection.getBoundingClientRect().top + 
-                                    window.pageYOffset - headerHeight - 20;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-
-    // Update active button on scroll
-    window.addEventListener('scroll', function() {
-        const sections = document.querySelectorAll('.category-section');
-        const headerHeight = document.querySelector('.sticky-header').offsetHeight;
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop - headerHeight - 100;
-            const sectionBottom = sectionTop + section.offsetHeight;
-            
-            if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionBottom) {
-                const targetId = section.id;
-                categoryButtons.forEach(button => {
-                    button.classList.toggle('active', 
-                        button.getAttribute('data-target') === targetId);
-                });
-            }
-        });
-    });
-}
-
-// Input Formatting Functions
-const formatConfig = {
-    workers: {
-        requests: { max: 1000000000, step: 1000, suffix: ' requests' },
-        cpu: { max: 50, step: 0.1, suffix: ' ms' }
-    },
-    r2: {
-        storage: { max: 1000000, step: 1, suffix: ' GB' },
-        classA: { max: 1000000000, step: 1000, suffix: ' ops' },
-        classB: { max: 1000000000, step: 1000, suffix: ' ops' }
-    },
-    kv: {
-        reads: { max: 1000000000, step: 1000, suffix: ' ops' },
-        writes: { max: 1000000000, step: 1000, suffix: ' ops' },
-        deletes: { max: 1000000000, step: 1000, suffix: ' ops' },
-        lists: { max: 1000000000, step: 1000, suffix: ' ops' },
-        storage: { max: 1000000, step: 1, suffix: ' GB' }
-    },
-    d1: {
-        reads: { max: 1000000000, step: 1000, suffix: ' rows' },
-        writes: { max: 1000000000, step: 1000, suffix: ' rows' },
-        storage: { max: 1000000, step: 1, suffix: ' GB' }
-    },
-    vectorize: {
-        queries: { max: 1000000000, step: 1000, suffix: ' dims' },
-        storage: { max: 1000000000, step: 1000, suffix: ' dims' }
-    },
-    analytics: {
-        datapoints: { max: 1000000000, step: 1000, suffix: ' points' },
-        queries: { max: 1000000000, step: 1000, suffix: ' queries' }
-    }
-};
-
-function formatNumber(value) {
-    if (value >= 1000000000) {
-        return (value / 1000000000).toFixed(1) + 'B';
-    } else if (value >= 1000000) {
-        return (value / 1000000).toFixed(1) + 'M';
-    } else if (value >= 1000) {
-        return (value / 1000).toFixed(1) + 'K';
-    }
-    return value.toString();
-}
-
-function formatInputValue(value, config) {
-    if (!value) return '0' + (config.suffix || '');
-    
-    const numValue = parseFloat(value);
-    if (isNaN(numValue)) return '0' + (config.suffix || '');
-    
-    return formatNumber(numValue) + (config.suffix || '');
-}
-
-function getCleanNumber(value) {
-    if (typeof value === 'string') {
-        // Remove any non-numeric characters except decimal point
-        value = value.replace(/[^0-9.]/g, '');
-    }
-    return parseFloat(value) || 0;
-}
-
-// Complete tier information configuration
-const tierInfo = {
-    workers: {
-        requests: {
-            free: "Free tier: 100,000 requests/day",
-            paid: "Paid tier includes: 10M requests/month"
-        },
-        cpu: {
-            free: "Free tier: 10ms CPU time",
-            paid: "Paid tier includes: 30M CPU-ms/month"
-        }
-    },
-    r2: {
-        storage: {
-            free: "Free tier: 10GB storage",
-            paid: "Paid tier: $0.015 per GB"
-        },
-        classA: {
-            free: "Free tier: 1M Class A ops/month",
-            paid: "Paid tier: $4.50 per million Class A ops"
-        },
-        classB: {
-            free: "Free tier: 10M Class B ops/month",
-            paid: "Paid tier: $0.36 per million Class B ops"
-        }
-    },
-    kv: {
-        reads: {
-            free: "Free tier: 100,000 reads/day",
-            paid: "Paid tier includes: 10M reads/month"
-        },
-        writes: {
-            free: "Free tier: 1,000 writes/day",
-            paid: "Paid tier includes: 1M writes/month"
-        },
-        deletes: {
-            free: "Free tier: 1,000 deletes/day",
-            paid: "Paid tier includes: 1M deletes/month"
-        },
-        lists: {
-            free: "Free tier: 1,000 list ops/day",
-            paid: "Paid tier includes: 1M list ops/month"
-        },
-        storage: {
-            free: "Free tier: 1GB storage",
-            paid: "Paid tier includes: 1GB storage"
-        }
-    },
-    d1: {
-        reads: {
-            free: "Free tier: 5M rows read/day",
-            paid: "Paid tier includes: 25B rows read/month"
-        },
-        writes: {
-            free: "Free tier: 100K rows written/day",
-            paid: "Paid tier includes: 50M rows written/month"
-        },
-        storage: {
-            free: "Free tier: 5GB storage",
-            paid: "Paid tier: $0.75 per additional GB"
-        }
-    },
-    durableObjects: {
-        requests: {
-            free: "No free tier",
-            paid: "Paid tier includes: 1M requests/month"
-        },
-        duration: {
-            free: "No free tier",
-            paid: "Paid tier includes: 400K GB-seconds/month"
-        }
-    },
-    vectorize: {
-        queries: {
-            free: "Free tier: 30M vector dimensions/month",
-            paid: "Paid tier includes: 50M vector dimensions/month"
-        },
-        storage: {
-            free: "Free tier: 5M vector dimensions",
-            paid: "Paid tier includes: 10M vector dimensions"
-        }
-    },
-    aiGateway: {
-        logs: {
-            free: "Free tier: 100K logs/month",
-            paid: "Paid tier includes: 200K logs/month"
-        }
-    },
-    analytics: {
-        datapoints: {
-            free: "Free tier: 100K data points/day",
-            paid: "Paid tier includes: 10M data points/month"
-        },
-        queries: {
-            free: "Free tier: 10K queries/day",
-            paid: "Paid tier includes: 1M queries/month"
-        }
-    },
-    zaraz: {
-        events: {
-            free: "Free tier: 1M events/month",
-            paid: "Paid tier: $5 per million events"
-        }
-    },
-    cicd: {
-        minutes: {
-            free: "Free tier: 3,000 minutes/month",
-            paid: "Paid tier includes: 6,000 minutes/month"
-        }
-    },
-    observability: {
-        events: {
-            free: "Free tier: 200K events/day",
-            paid: "Paid tier includes: 20M events/month"
-        }
-    }
-};
-
-// Function to update tier information note
-function updateTierInfo(input, isPaid) {
-    const [productId, inputType] = input.id.split('-');
-    const tierNote = input.parentElement.querySelector('.free-tier-note');
-    
-    if (!tierNote || !tierInfo[productId] || !tierInfo[productId][inputType]) return;
-    
-    const info = tierInfo[productId][inputType];
-    tierNote.textContent = isPaid ? info.paid : info.free;
-    
-    // Update styling
-    tierNote.className = `free-tier-note ${isPaid ? 'paid-tier' : ''}`;
-}
-
-// Add this CSS
-const tierStyles = document.createElement('style');
-tierStyles.textContent = `
-    .free-tier-note {
-        font-size: 0.85em;
-        color: #4caf50;
-        margin-top: 4px;
-        transition: all 0.3s ease;
-    }
-
-    .free-tier-note.paid-tier {
-        color: #2196f3;
-    }
-`;
-document.head.appendChild(tierStyles);
-
-// Enhanced Input Event Handlers
-function setupInputFormatting() {
-    const inputs = document.querySelectorAll('input[type="number"]');
-    
-    inputs.forEach(input => {
-        const [productId, inputType] = input.id.split('-');
-        const config = formatConfig[productId]?.[inputType];
-        
-        if (!config) return;
-
-        // Create formatted display element
-        const formattedDisplay = document.createElement('div');
-        formattedDisplay.className = 'formatted-value';
-        input.parentNode.appendChild(formattedDisplay);
-
-        // Style the input container
-        input.parentNode.style.position = 'relative';
-
-        // Input event handlers
-        input.addEventListener('input', function(e) {
-            let value = getCleanNumber(this.value);
-            
-            // Check if exceeding free tier
-            let isPaid = false;
-            switch(this.id) {
-                // Existing cases...
-                case 'd1-reads':
-                    isPaid = value > 5000000;
-                    break;
-                case 'd1-writes':
-                    isPaid = value > 100000;
-                    break;
-                case 'd1-storage':
-                    isPaid = value > 5;
-                    break;
-                case 'durableObjects-requests':
-                case 'durableObjects-duration':
-                    isPaid = value > 0; // Always paid
-                    break;
-                case 'vectorize-queries':
-                    isPaid = value > 30000000;
-                    break;
-                case 'vectorize-storage':
-                    isPaid = value > 5000000;
-                    break;
-                case 'aiGateway-logs':
-                    isPaid = value > 100000;
-                    break;
-                case 'analytics-datapoints':
-                    isPaid = value > 100000;
-                    break;
-                case 'analytics-queries':
-                    isPaid = value > 10000;
-                    break;
-                case 'zaraz-events':
-                    isPaid = value > 1000000;
-                    break;
-                case 'cicd-minutes':
-                    isPaid = value > 3000;
-                    break;
-                case 'observability-events':
-                    isPaid = value > 200000;
-                    break;
-            }
-            
-            // Update tier information
-            updateTierInfo(this, isPaid);
-            
-            // Apply max limit
-            if (config.max && value > config.max) {
-                value = config.max;
-                this.value = value;
-            }
-
-            // Update formatted display
-            formattedDisplay.textContent = formatInputValue(value, config);
-            
-            // Trigger cost calculation
-            updateTotalCost();
-        });
-
-        input.addEventListener('focus', function() {
-            formattedDisplay.style.opacity = '0';
-            this.value = getCleanNumber(this.value);
-        });
-
-        input.addEventListener('blur', function() {
-            let value = getCleanNumber(this.value);
-            
-            // Round to step
-            if (config.step) {
-                value = Math.round(value / config.step) * config.step;
-            }
-            
-            this.value = value;
-            formattedDisplay.style.opacity = '1';
-            formattedDisplay.textContent = formatInputValue(value, config);
-        });
-
-        // Initialize formatted display
-        formattedDisplay.textContent = formatInputValue(input.value, config);
-    });
-}
-
-// Add this CSS
-const style = document.createElement('style');
-style.textContent = `
-    .input-group {
-        position: relative;
-    }
-    
-    .formatted-value {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #666;
-        pointer-events: none;
-        transition: opacity 0.2s;
-        font-size: 0.9em;
-    }
-    
-    input[type="number"] {
-        padding-right: 80px;
-    }
-    
-    /* Hide browser arrows */
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-    input[type="number"] {
-        -moz-appearance: textfield;
-    }
-`;
-document.head.appendChild(style);
-
-// Product descriptions for tooltips
-const productDescriptions = {
-    workers: {
-        title: "Workers",
-        description: "Serverless JavaScript execution environment. Run code across the Cloudflare network edge.",
-        pricing: "Free Tier: 100,000 requests/day, 10ms CPU time\nPaid: $0.30/million requests after first 10M/month",
-        useCase: "Ideal for: API handling, web applications, and edge computing tasks"
-    },
-    r2: {
-        title: "R2 Storage",
-        description: "Object storage service with no egress fees. Compatible with S3 API.",
-        pricing: "Free Tier: 10GB storage, 1M Class A ops, 10M Class B ops\nPaid: $0.015/GB/month after free tier",
-        useCase: "Ideal for: Storing large files, backups, and static assets"
-    },
-    workersKV: {
-        title: "Workers KV",
-        description: "Low-latency key-value data store accessible from Workers.",
-        pricing: "Free Tier: 100k reads/day, 1k writes/day\nPaid: $0.50/million reads, $5.00/million writes",
-        useCase: "Ideal for: Configuration data, user sessions, and cached content"
-    },
-    d1: {
-        title: "D1 Database",
-        description: "Serverless SQL database built on SQLite.",
-        pricing: "Free Tier: 5M rows read/day, 100k writes/day, 5GB storage\nPaid: Based on usage",
-        useCase: "Ideal for: Relational data storage, full SQL query capabilities"
-    },
-    durableObjects: {
-        title: "Durable Objects",
-        description: "Stateful serverless computing with strong consistency.",
-        pricing: "Paid: $0.15/million requests, $12.50/million GB-seconds",
-        useCase: "Ideal for: Coordination, real-time applications, and gaming"
-    },
-    aiGateway: {
-        title: "AI Gateway",
-        description: "Managed access to AI models with built-in caching and security.",
-        pricing: "Free Tier: 100k logs/month\nPaid: $8.00/100k logs after 200k",
-        useCase: "Ideal for: AI model integration and management"
-    },
-    vectorize: {
-        title: "Vectorize",
-        description: "Vector database for AI and machine learning applications.",
-        pricing: "Free Tier: 30M vector dimensions queried/month\nPaid: $0.01/million after 50M",
-        useCase: "Ideal for: Semantic search, AI embeddings storage"
-    },
-    cicd: {
-        title: "Workers CI/CD",
-        description: "Continuous integration and deployment for Workers.",
-        pricing: "Free Tier: 3,000 minutes/month\nPaid: $0.005/minute after 6,000",
-        useCase: "Ideal for: Automated testing and deployment"
-    },
-    observability: {
-        title: "Observability",
-        description: "Monitoring and debugging tools for Workers and Pages.",
-        pricing: "Free Tier: 200k events/day\nPaid: $0.60/million events after 20M/month",
-        useCase: "Ideal for: Performance monitoring and debugging"
-    },
-    analytics: {
-        title: "Workers Analytics Engine",
-        description: "Real-time analytics processing and storage.",
-        pricing: "Free Tier: 100k points/day, 10k queries/day\nPaid: $0.25/million points",
-        useCase: "Ideal for: Custom analytics and event tracking"
-    },
-    zaraz: {
-        title: "Zaraz",
-        description: "Third-party tool manager running at the edge.",
-        pricing: "Free Tier: 1M events/month\nPaid: $5.00/million events",
-        useCase: "Ideal for: Marketing tags, analytics, and third-party scripts"
-    }
-};
-
-// Add this CSS
-const tooltipStyles = document.createElement('style');
-tooltipStyles.textContent = `
-    .product-tooltip {
-        position: relative;
-        cursor: help;
-    }
-
-    .product-tooltip .tooltip-content {
-        visibility: hidden;
-        position: absolute;
-        z-index: 1000;
-        width: 300px;
-        background: white;
-        border: 1px solid #e3f2fd;
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        transition: opacity 0.3s, transform 0.3s;
-        transform: translateY(10px);
-        left: -10px;
-        top: 100%;
-        margin-top: 10px;
-        pointer-events: none;
-    }
-
-    .product-tooltip:hover .tooltip-content {
-        visibility: visible;
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .tooltip-content::before {
-        content: '';
-        position: absolute;
-        top: -6px;
-        left: 20px;
-        width: 12px;
-        height: 12px;
-        background: white;
-        transform: rotate(45deg);
-        border-left: 1px solid #e3f2fd;
-        border-top: 1px solid #e3f2fd;
-    }
-
-    .tooltip-title {
-        font-weight: bold;
-        color: #1976d2;
-        margin-bottom: 8px;
-        font-size: 1.1em;
-    }
-
-    .tooltip-description {
-        margin-bottom: 8px;
-        color: #333;
-    }
-
-    .tooltip-pricing {
-        margin-bottom: 8px;
-        color: #666;
-        font-size: 0.9em;
-        white-space: pre-line;
-    }
-
-    .tooltip-usecase {
-        color: #2196f3;
-        font-style: italic;
-        font-size: 0.9em;
-    }
-`;
-document.head.appendChild(tooltipStyles);
-
-// Function to create tooltips
-function setupTooltips() {
-    const productTitles = document.querySelectorAll('.product-card h3');
-    
-    productTitles.forEach(title => {
-        const productId = title.closest('.product-card').id.split('-')[0];
-        const productInfo = productDescriptions[productId];
-        
-        if (!productInfo) return;
-
-        // Wrap title text in tooltip container
-        const tooltipWrapper = document.createElement('div');
-        tooltipWrapper.className = 'product-tooltip';
-        tooltipWrapper.innerHTML = `
-            ${title.textContent}
-            <div class="tooltip-content">
-                <div class="tooltip-title">${productInfo.title}</div>
-                <div class="tooltip-description">${productInfo.description}</div>
-                <div class="tooltip-pricing">${productInfo.pricing}</div>
-                <div class="tooltip-usecase">${productInfo.useCase}</div>
-            </div>
-        `;
-
-        title.textContent = '';
-        title.appendChild(tooltipWrapper);
-    });
-}
-
-// Event Listeners and Initialization
+// Initialize everything when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize navigation
     initializeNavigation();
 
-    // Add input formatting
-    setupInputFormatting();
-
-    // Add input event listeners to all numeric inputs
+    // Setup input formatting and event listeners
     const inputs = document.querySelectorAll('input[type="number"]');
     inputs.forEach(input => {
         input.addEventListener('input', function() {
-            try {
-                // Ensure non-negative values
-                if (this.value < 0) this.value = 0;
-                
-                // Update costs
-                updateTotalCost();
-            } catch (error) {
-                handleError(error, this.id.split('-')[0]);
-            }
+            if (this.value < 0) this.value = 0;
+            calculateTotalCost();
+            updateTierInfo(this, checkIfPaidTier(this.id, parseFloat(this.value) || 0));
         });
 
-        // Add blur event to format numbers
         input.addEventListener('blur', function() {
             if (this.value === '') this.value = '0';
+            calculateTotalCost();
         });
     });
 
-    // Initialize calculations
-    updateTotalCost();
-
-    // Add tooltips
-    setupTooltips();
-
-    // Initialize all tier notes
-    const inputs = document.querySelectorAll('input[type="number"]');
-    inputs.forEach(input => {
-        const value = getCleanNumber(input.value);
-        updateTierInfo(input, false); // Start with free tier info
-    });
+    // Initial calculation
+    calculateTotalCost();
 });
-
-// Input Validation
-function validateInput(input) {
-    const value = parseFloat(input.value);
-    if (isNaN(value) || value < 0) {
-        input.value = 0;
-        return false;
-    }
-    return true;
-}
