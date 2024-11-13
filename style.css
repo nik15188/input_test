@@ -354,33 +354,3 @@ main {
 .category-section {
     scroll-margin-top: 250px; /* Adjust this value based on your header height */
 }
-
-.formatted-value {
-    margin-left: 10px;
-    color: #666;
-    font-size: 0.9em;
-    font-style: italic;
-    display: none;
-    animation: fadeIn 0.2s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-2px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.input-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.input-group input {
-    width: 150px; /* or whatever width you prefer */
-}
