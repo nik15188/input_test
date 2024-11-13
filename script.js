@@ -243,26 +243,32 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetSection = document.getElementById(targetId);
             
             if (targetSection) {
-                targetSection.scrollIntoView({ behavior: 'smooth' });
+                const headerHeight = document.querySelector('.sticky-header').offsetHeight;
+                const targetPosition = targetSection.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
             }
         });
     });
 
-    // Optional: Update active button on scroll
+    // Update active button on scroll
     window.addEventListener('scroll', function() {
         const sections = document.querySelectorAll('.category-section');
-        let currentSection = '';
+        const headerHeight = document.querySelector('.sticky-header').offsetHeight;
         
         sections.forEach(section => {
-            const sectionTop = section.offsetTop - 250;
-            if (window.pageYOffset >= sectionTop) {
-                currentSection = section.id;
+            const sectionTop = section.offsetTop - headerHeight - 100;
+            const sectionBottom = sectionTop + section.offsetHeight;
+            
+            if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionBottom) {
+                const targetId = section.id;
+                categoryButtons.forEach(button => {
+                    button.classList.toggle('active', button.getAttribute('data-target') === targetId);
+                });
             }
-        });
-        
-        categoryButtons.forEach(button => {
-            button.classList.toggle('active', 
-                button.getAttribute('data-target') === currentSection);
         });
     });
 });
