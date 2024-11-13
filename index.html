@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Pricing Calculator</title>
+    <title>Cloudflare Services Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Product Pricing Calculator</h1>
+            <h1>Cloudflare Services Calculator</h1>
             <div class="total-summary">
                 <div class="total-cost">
                     <h2>Total Monthly Cost: <span id="total-cost">$0.00</span></h2>
@@ -21,19 +21,203 @@
 
         <main>
             <div class="product-grid">
+                <!-- Workers -->
                 <div class="product-card">
-                    <h3>Product 1</h3>
+                    <h3>Workers</h3>
                     <div class="input-group">
-                        <label for="product1-usage">Monthly Usage:</label>
-                        <input type="number" id="product1-usage" min="0" value="0">
+                        <label for="workers-requests">Requests/Day:</label>
+                        <input type="number" id="workers-requests" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 100,000 requests/day</div>
                     </div>
                     <div class="input-group">
-                        <label for="product1-storage">Storage (GB):</label>
-                        <input type="number" id="product1-storage" min="0" value="0">
+                        <label for="workers-cpu">CPU Time/Invocation (ms):</label>
+                        <input type="number" id="workers-cpu" min="0" value="0" step="0.001">
+                        <div class="free-tier-note">Free tier: 10ms CPU time</div>
                     </div>
                     <div class="card-summary">
-                        <div class="plan-badge" id="product1-plan">Free Plan</div>
-                        <div class="price">Estimated Cost: <span id="product1-cost">$0.00</span></div>
+                        <div class="plan-badge" id="workers-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="workers-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- R2 -->
+                <div class="product-card">
+                    <h3>R2</h3>
+                    <div class="input-group">
+                        <label for="r2-storage">Storage (GB):</label>
+                        <input type="number" id="r2-storage" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 10 GB</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="r2-class-a">Class A Operations/Day:</label>
+                        <input type="number" id="r2-class-a" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 1M operations/month</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="r2-class-b">Class B Operations/Day:</label>
+                        <input type="number" id="r2-class-b" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 10M operations/month</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="r2-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="r2-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- Workers KV -->
+                <div class="product-card">
+                    <h3>Workers KV</h3>
+                    <div class="input-group">
+                        <label for="kv-reads">Read Requests/Day:</label>
+                        <input type="number" id="kv-reads" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 100,000 reads/day</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="kv-writes">Write Requests/Day:</label>
+                        <input type="number" id="kv-writes" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 1,000 writes/day</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="kv-deletes">Delete Requests/Day:</label>
+                        <input type="number" id="kv-deletes" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 1,000 deletes/day</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="kv-lists">List Requests/Day:</label>
+                        <input type="number" id="kv-lists" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 1,000 lists/day</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="kv-storage">Storage (GB):</label>
+                        <input type="number" id="kv-storage" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 1 GB</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="kv-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="kv-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- D1 -->
+                <div class="product-card">
+                    <h3>D1</h3>
+                    <div class="input-group">
+                        <label for="d1-reads">Rows Read/Day:</label>
+                        <input type="number" id="d1-reads" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 5M reads/day</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="d1-writes">Rows Written/Day:</label>
+                        <input type="number" id="d1-writes" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 100K writes/day</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="d1-storage">Storage (GB):</label>
+                        <input type="number" id="d1-storage" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 5 GB</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="d1-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="d1-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- Vectorize -->
+                <div class="product-card">
+                    <h3>Vectorize</h3>
+                    <div class="input-group">
+                        <label for="vectorize-queries">Queried Vector Dimensions/Month:</label>
+                        <input type="number" id="vectorize-queries" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 30M queries/month</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="vectorize-storage">Stored Vector Dimensions:</label>
+                        <input type="number" id="vectorize-storage" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 5M dimensions</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="vectorize-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="vectorize-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- Durable Objects -->
+                <div class="product-card">
+                    <h3>Durable Objects</h3>
+                    <div class="input-group">
+                        <label for="do-requests">Requests/Day:</label>
+                        <input type="number" id="do-requests" min="0" value="0">
+                        <div class="free-tier-note">Paid feature: $0.15 per million requests</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="do-duration">Duration (GB-seconds/Day):</label>
+                        <input type="number" id="do-duration" min="0" value="0">
+                        <div class="free-tier-note">Paid feature: $12.50 per million GB-seconds</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="do-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="do-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- Workers Analytics Engine -->
+                <div class="product-card">
+                    <h3>Workers Analytics Engine</h3>
+                    <div class="input-group">
+                        <label for="analytics-datapoints">Data Points/Day:</label>
+                        <input type="number" id="analytics-datapoints" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 100K datapoints/day</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="analytics-queries">Read Queries/Day:</label>
+                        <input type="number" id="analytics-queries" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 10K queries/day</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="analytics-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="analytics-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- Zaraz -->
+                <div class="product-card">
+                    <h3>Zaraz</h3>
+                    <div class="input-group">
+                        <label for="zaraz-events">Events/Day:</label>
+                        <input type="number" id="zaraz-events" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 1M events/month</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="zaraz-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="zaraz-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- AI Gateway -->
+                <div class="product-card">
+                    <h3>AI Gateway</h3>
+                    <div class="input-group">
+                        <label for="ai-gateway-logs">Logs/Day:</label>
+                        <input type="number" id="ai-gateway-logs" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 100K logs/month</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="ai-gateway-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="ai-gateway-cost">$0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- CI/CD -->
+                <div class="product-card">
+                    <h3>CI/CD</h3>
+                    <div class="input-group">
+                        <label for="cicd-minutes">Minutes/Day:</label>
+                        <input type="number" id="cicd-minutes" min="0" value="0">
+                        <div class="free-tier-note">Free tier: 3000 minutes/month</div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="plan-badge" id="cicd-plan">Free Plan</div>
+                        <div class="price">Estimated Cost: <span id="cicd-cost">$0.00</span></div>
                     </div>
                 </div>
             </div>
