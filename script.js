@@ -107,6 +107,29 @@ function calculateWorkers() {
     };
 }
 
+// Add this event listener code
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the workers requests input
+    const workersInput = document.getElementById('workers-requests');
+    
+    if (workersInput) {
+        // Listen for input changes
+        workersInput.addEventListener('input', function() {
+            calculateWorkersMonthlyRequests();
+        });
+
+        // Initial calculation when page loads
+        calculateWorkersMonthlyRequests();
+    }
+});
+
+// Helper function to format numbers (optional)
+function formatNumber(num) {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+}
+
 function calculateR2() {
     const storage = parseFloat(document.getElementById('r2-storage').value) || 0;
     const classA = parseFloat(document.getElementById('r2-class-a').value) || 0;
