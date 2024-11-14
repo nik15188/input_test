@@ -354,3 +354,77 @@ main {
 .category-section {
     scroll-margin-top: 250px; /* Adjust this value based on your header height */
 }
+
+// Add this CSS
+const tooltipStyles = document.createElement('style');
+tooltipStyles.textContent = `
+    .product-tooltip {
+        position: relative;
+        cursor: help;
+    }
+
+    .product-tooltip .tooltip-content {
+        visibility: hidden;
+        position: absolute;
+        z-index: 1000;
+        width: 300px;
+        background: white;
+        border: 1px solid #e3f2fd;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transition: opacity 0.3s, transform 0.3s;
+        transform: translateY(10px);
+        left: -10px;
+        top: 100%;
+        margin-top: 10px;
+        pointer-events: none;
+    }
+
+    .product-tooltip:hover .tooltip-content {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .tooltip-content::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 20px;
+        width: 12px;
+        height: 12px;
+        background: white;
+        transform: rotate(45deg);
+        border-left: 1px solid #e3f2fd;
+        border-top: 1px solid #e3f2fd;
+    }
+
+    .tooltip-title {
+        font-weight: bold;
+        color: #1976d2;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+    }
+
+    .tooltip-description {
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .tooltip-pricing {
+        margin-bottom: 8px;
+        color: #666;
+        font-size: 0.9em;
+        white-space: pre-line;
+    }
+
+    .tooltip-usecase {
+        color: #2196f3;
+        font-style: italic;
+        font-size: 0.9em;
+    }
+`;
+document.head.appendChild(tooltipStyles);
+
