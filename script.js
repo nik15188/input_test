@@ -61,12 +61,21 @@ function calculateExcessCost(usage, included, ratePerUnit, unitSize = 1000000) {
 
 // Calculate workers monthly volume test
 function calculateWorkersMonthlyRequests() {
-const requestsPerDay = parseFloat(document.getElementById('workers-requests').value) || 0;
-return {
-
-    month: requestsPerDay * 30
-};
+    // Get and validate input
+    const requestsPerDay = parseFloat(document.getElementById('workers-requests').value) || 0;
     
+    // Calculate monthly requests
+    const monthlyRequests = requestsPerDay * 30;
+    
+    // Update the span element with the monthly value
+    const monthlySpan = document.getElementById('workers-month');
+    if (monthlySpan) {
+        monthlySpan.textContent = formatNumber(monthlyRequests);
+    }
+
+    return {
+        month: monthlyRequests
+    };
 }
 
 
