@@ -58,6 +58,18 @@ function calculateExcessCost(usage, included, ratePerUnit, unitSize = 1000000) {
     return Math.ceil(excess / unitSize) * ratePerUnit;
 }
 
+
+// Calculate workers monthly volume test
+function calculateWorkersMonthlyRequests() {
+const requestsPerDay = parseFloat(document.getElementById('workers-requests').value) || 0;
+return {
+
+    month: requestsPerDay * 30
+};
+    
+}
+
+
 // Product Calculation Functions
 function calculateWorkers() {
     const requestsPerDay = parseFloat(document.getElementById('workers-requests').value) || 0;
