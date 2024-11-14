@@ -184,7 +184,8 @@
                         <div class="input-group">
                             <label for="vectorize-queries">Queried Vector Dimensions/Month:</label>
                             <input type="number" id="vectorize-queries" min="0" value="0">
-                            <div class="free-tier-note">Free tier: 30M queries/month</div>
+                            <div class="free-tier-note">Free tier: 30M queries/month incl.</div>
+                            <div class="free-tier-note">Paid tier: 50M queries/month incl.</div>
                         </div>
                         <div class="input-group">
                             <label for="vectorize-storage">Stored Vector Dimensions:</label>
@@ -222,16 +223,12 @@
                     <div class="product-card">
                         <h3>Observability</h3>
                         <div class="input-group">
-                            <label for="observability-datapoints">Data Points/Day:</label>
+                            <label for="observability-datapoints">Events/Day:</label>
                             <input type="number" id="observability-datapoints" min="0" value="0">
-                            <div class="free-tier-note">Free tier: 100K datapoints/day</div>
+                            <div class="free-tier-note">Free tier: 200K events/day</div>
+                            <div class="free-tier-note">Paid tier: 20MM events/month</div>
                         </div>
-                        <div class="input-group">
-                            <label for="observability-queries">Read Queries/Day:</label>
-                            <input type="number" id="observability-queries" min="0" value="0">
-                            <div class="free-tier-note">Free tier: 10K queries/day</div>
-                        </div>
-                        <div class="card-summary">
+                            <div class="card-summary">
                             <div class="plan-badge" id="observability-plan">Free Plan</div>
                             <div class="price">Estimated Cost: <span id="observability-cost">$0.00</span></div>
                         </div>
