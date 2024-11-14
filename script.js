@@ -351,7 +351,7 @@ function updateProductUI(productId, result) {
 function updateTotalCost() {
     const products = [
         { id: 'workers', calc: calculateWorkers },
-        { id: 'workers', calc:calculateWorkersMonthlyRequests },
+       // { id: 'workers', calc:calculateWorkersMonthlyRequests },
         { id: 'r2', calc: calculateR2 },
         { id: 'kv', calc: calculateWorkersKV },
         { id: 'd1', calc: calculateD1 },
